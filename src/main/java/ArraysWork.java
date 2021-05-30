@@ -68,5 +68,6 @@ public class ArraysWork {
 
         long end = System.currentTimeMillis();
         System.out.println("Total execution time arrayOne: " + (end - start) + " ms");
+
     }
 }
