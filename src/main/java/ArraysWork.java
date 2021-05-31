@@ -8,7 +8,7 @@ public class ArraysWork {
     static float[] arrTransfer1 = new float[HALF];
     static float[] arrTransfer2 = new float[HALF];
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         arrayOne();
         arrayTwo();
@@ -30,7 +30,7 @@ public class ArraysWork {
 
     }
 
-    public static void arrayTwo() {
+    public static void arrayTwo() throws InterruptedException {
 
         for (int i = 0; i < arr.length; i++) {
             arr[i] += 1;
@@ -60,11 +60,14 @@ public class ArraysWork {
         thread1.start();
         thread2.start();
 
-        System.arraycopy(arrTransfer1, 0, arr, 0, HALF);
-        System.arraycopy(arrTransfer2, 0, arr, HALF, HALF);
 
+        thread1.join();
+        thread2.join();
         thread1.interrupt();
         thread2.interrupt();
+
+        System.arraycopy(arrTransfer1, 0, arr, 0, HALF);
+        System.arraycopy(arrTransfer2, 0, arr, HALF, HALF);
 
         long end = System.currentTimeMillis();
         System.out.println("Total execution time arrayOne: " + (end - start) + " ms");
