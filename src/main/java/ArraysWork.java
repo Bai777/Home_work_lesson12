@@ -4,11 +4,12 @@ public class ArraysWork {
 
     static final int SIZE = 10_000_000;
     static final int HALF = SIZE / 2;
-    static float[] arr = new float[SIZE];
-    static float[] arrTransfer1 = new float[HALF];
-    static float[] arrTransfer2 = new float[HALF];
+    static float[] arr1 = new float[SIZE];
+    static float[] arr2 = new float[SIZE];
+//    static float[] arrTransfer1 = new float[HALF];
+//    static float[] arrTransfer2 = new float[HALF];
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
         arrayOne();
         arrayTwo();
@@ -17,29 +18,29 @@ public class ArraysWork {
 
     public static void arrayOne() {
 
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] += 1;
+        for (int i = 0; i < arr1.length; i++) {
+            arr1[i] += 1;
         }
         long start = System.currentTimeMillis();
 
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = (float) (arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+        for (int i = 0; i < arr1.length; i++) {
+            arr1[i] = (float) (arr1[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
         }
         long end = System.currentTimeMillis();
         System.out.println("Total execution time arrayOne: " + (end - start) + " ms");
 
     }
 
-    public static void arrayTwo() throws InterruptedException {
+    public static void arrayTwo(){
 
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] += 1;
+        for (int i = 0; i < arr2.length; i++) {
+            arr2[i] += 1;
         }
 
         long start = System.currentTimeMillis();
 
-        System.arraycopy(arr, 0, arrTransfer1, 0, HALF);
-        System.arraycopy(arr, HALF, arrTransfer2, 0, HALF);
+        float[] arrTransfer1 = Arrays.copyOfRange(arr2, 0,  HALF);
+        float[] arrTransfer2 = Arrays.copyOfRange(arr2, HALF,  arr2.length);
 
         Thread thread1 = new Thread(() -> {
 
@@ -61,16 +62,24 @@ public class ArraysWork {
         thread2.start();
 
 
-        thread1.join();
-        thread2.join();
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        }
+
+
+        System.arraycopy(arrTransfer1, 0, arr2, 0, HALF);
+        System.arraycopy(arrTransfer2, 0, arr2, HALF, arrTransfer2.length);
+
         thread1.interrupt();
         thread2.interrupt();
 
-        System.arraycopy(arrTransfer1, 0, arr, 0, HALF);
-        System.arraycopy(arrTransfer2, 0, arr, HALF, HALF);
-
         long end = System.currentTimeMillis();
         System.out.println("Total execution time arrayOne: " + (end - start) + " ms");
+        System.out.println("Arrays arr1 equals arr2: " + Arrays.equals(arr1, arr2));
 
     }
 }
